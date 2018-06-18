@@ -1,0 +1,286 @@
+import java.util.Scanner;
+import java.lang.Exception;
+class MyException extends Exception
+{
+    MyException(String message)
+    {
+        super(message);
+    }
+}    
+interface Operations
+{   
+   
+    void create();
+    void credit();
+    void debit();
+    void summary(int no,String name,String type,double bal);
+    boolean quit();
+    
+}
+class IBanking implements Operations
+{   Scanner s=new Scanner(System.in);
+     int c,i=0,n,accountNum=1001;
+    IBanking[] a=new IBanking[5];
+    String accname,acctype;
+    int currAccNo,savAccNo;
+    double currBal,savBal;
+    public IBanking()
+    {
+        accname="";
+        currAccNo=0;
+        savAccNo=0;
+        currBal=0;
+        savBal=0;
+        acctype="";
+    }
+    public IBanking(String name,int cNo,int sNo,double cBal,double sBal,String atype)
+    {
+        accname=name;
+        currAccNo=cNo;
+        savAccNo=sNo;
+        currBal=cBal;
+        savBal=sBal;
+        acctype=atype;
+    }
+
+    public static void main(String []args)
+    {  IBanking obj=new IBanking();
+       boolean quit=false;
+        do
+        {
+            System.out.println("\n1: Create a new account");
+            System.out.println("2: Debit");
+            System.out.println("3: Credit");
+            System.out.println("4: Quit");
+            int n=obj.s.nextInt();
+            if(n==1)
+                obj.create();
+            if(n==2)
+                obj.debit();
+            if(n==3)
+                obj.credit();
+            if(n==4)
+            {   obj.quit();
+                break;}        
+        }
+        while(!quit);
+        System.out.println("Thankyou");
+        
+    }   
+    public void create()
+   {    
+         if(i<5)
+                    {
+                        System.out.println("Enter your name");
+                        String accName=s.next();
+                        System.out.println("press 1 for saving account\npress 2 for current account");
+                        int t=s.nextInt();
+                        if(t==1)
+                        {
+                            System.out.println("Your account number is:"+accountNum);
+                            System.out.println("Enter an opening balance:");
+                            double sb=s.nextDouble();
+                            try
+                            {
+                                
+                            if(sb>0)
+                            {
+                              a[i]=new IBanking(accName,0,accountNum,0,sb,"Saving");
+                          
+                             
+                              summary(accountNum,a[i].accname,"Saving",a[i].savBal);
+                              accountNum++;
+                              i++;
+                            }
+                            else
+                            throw new MyException("invalid");
+                        }
+                        catch(MyException e)
+                        {
+                            System.out.print(e.getMessage());
+                             
+                            
+                        }
+                        
+                    }    
+                        else if(t==2)
+                        {
+                            System.out.println("Your account number is:"+accountNum);
+                            System.out.println("Enter an opening balance:");
+                            double cb=s.nextDouble();
+                            try{
+                                if(cb>0)
+                                {
+                                 a[i]=new IBanking(accName,accountNum,0,cb,0,"Current");
+                                 summary(accountNum,a[i].accname,"Current",a[i].currBal);
+                                 accountNum++;
+                                 i++;
+                                }
+                                else
+                                 
+                                     throw new MyException("invalid");
+                               }
+                               catch(MyException e)
+                               { 
+                                   System.out.print(e.getMessage());
+                               }
+                            }
+                                
+
+                              
+                        else
+                             System.out.println("invalid input");
+                    }
+                else
+                         System.out.println("Sorry!! Customer limit exceeded");
+    
+   }
+    public void debit()
+    {
+        System.out.println("Enter your account number:");
+        int a1=s.nextInt();
+        for(int i1=0;i1<i;i1++)
+            {
+                if(a1==a[i1].currAccNo)
+                    {
+                       System.out.println("Enter the amount you want to debit");
+                       double amount=s.nextDouble();
+                       try{
+                            if(amount<=30000 && amount>0)
+                                {
+                                    if(amount<a[i1].currBal)
+                                    {
+                                      a[i1].currBal=a[i1].currBal-amount;
+                                      summary(a1,a[i1].accname,"Current",a[i1].currBal);
+                                    }
+                                    else
+                                    {
+                                      System.out.print("Sorry!! Your balance is low");
+                                    }
+                                 }
+                                 else
+                                    throw new MyException("Invalid amount");
+                                }
+                            catch(MyException e){
+                                
+                             System.out.print(e.getMessage());
+                             
+                            }
+                             
+                             break;
+                            }
+                         else if(a1==a[i1].savAccNo)
+                             {
+                             System.out.println("Enter the amount you want to debit");
+                             double amount=s.nextDouble();
+                             try{
+                                 if(amount<=30000 && amount>0)
+                                 {
+                                   if(amount<a[i1].savBal)
+                                   {
+                                    a[i1].savBal=a[i1].savBal-amount;
+                              
+                                    summary(a1,a[i1].accname,"Saving",a[i1].savBal);
+                                   }
+                                   else
+                                   {
+                                    System.out.print("Sorry!! Your balance is low");
+                                   }
+                                }
+                                  else
+                                   throw new MyException("Invalid");
+                                }
+                              catch(MyException e){
+                                
+                                System.out.print(e.getMessage());
+                             
+                            }
+                                
+                             }
+                        
+                         else
+                             {
+                              if(i1==(i-1)) 
+                              System.out.println("you are not registered user");
+                             }
+                            
+                     }
+    }
+    public void credit()
+    {
+        System.out.println("Enter your account number from which you want to credit:");
+                    int a2=s.nextInt();
+                    for(int i2=0;i2<i;i2++)
+                    {
+                        if(a2==a[i2].currAccNo)
+                        {
+                            System.out.println("Enter the amount to be credited:");
+                            double amount=s.nextDouble();
+                            a[i2].currBal=a[i2].currBal+amount;
+                                try{
+                                    if(amount>0)
+                                    summary(a2,a[i2].accname,"Current",a[i2].currBal);
+                                    else
+                                    throw new MyException("sorry!! Transaction cannot be performed");
+                                 }
+                               catch(MyException e)
+                               {
+                                   System.out.println(e.getMessage());
+                                }
+                                
+                            
+                            
+                            
+                            break;
+                        }
+                        else if(a2==a[i2].savAccNo)
+                        {
+                            System.out.println("Enter the amount to be debited:");
+                            double amount=s.nextDouble();
+                            try{
+                                if(amount>0)
+                                {
+                            
+                                  a[i2].savBal=a[i2].savBal+amount;
+                                 
+                                   summary(a2,a[i2].accname,"Saving",a[i2].savBal);}
+                                   else
+                             
+                                   throw new MyException("amount invalid");
+                              }
+                              catch(MyException e){
+                                
+                                System.out.print(e.getMessage());
+                             
+                            }
+                            
+                            break;
+                        }
+                        else
+                        {
+                            if(i2==(i-1))
+                                System.out.println("You are not a registered user");
+                        }
+                    }
+                    
+                    
+    }
+                     
+    public boolean quit()
+    {
+        boolean quit1=true;
+        
+        return quit1;
+    }
+
+     public  void summary(int no,String name,String type,double bal)
+        {
+            System.out.println("Account Number : "+no);
+            System.out.println("Account Name : "+name);
+            System.out.println("Account Balance : "+bal);
+            System.out.println("Account Type : "+type);
+        }
+
+        
+    }
+   
